@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Museek</string>
+    <string name="logo">Museek</string>
+    <string name="connectButton">Connect to Spotify</string>
+    <string name="quitButton">Quit the app</string>
+    <string name="credits">Developed by \n@Vincent COURSAC and Paul TORTEL</string>
+    <string name="info">Connect to Spotify and\ndiscover new musics</string>
 </resources>

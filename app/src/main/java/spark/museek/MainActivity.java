@@ -1,48 +1,90 @@
 package spark.museek;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.util.Calendar;
 
-public class MainActivity extends Activity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback
+import spark.museek.spotify.SpotifyUser;
+
+public class MainActivity extends Activity
 {
-
-    // TODO: Replace with your client ID
-    private static final String CLIENT_ID = "48dd7790935c4dd8838fa586bd076aee";
-    // TODO: Replace with your redirect URI
-    private static final String REDIRECT_URI = "museek://callback";
-
-    private Player mPlayer;
-
-    // Request code that will be used to verify if the result comes from correct activity
-// Can be any integer
-    private static final int REQUEST_CODE = 1337;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID,
+        SpotifyUser.getInstance().setAccessToken(TryLoadFromCache("token"));
+
+        if (SpotifyUser.getInstance().getAccessToken() != null) {
+
+            if (!isTokenStillValid())
+                return;
+
+            Intent newintent = new Intent(this, DiscoverActivity.class);
+            startActivity(newintent);
+        }
+    }
+
+    public boolean isTokenStillValid() {
+
+        String exp = TryLoadFromCache("expiration");
+
+        if (exp == null)
+            return false;
+
+        String expParams[] = exp.split(" ");
+
+        if (expParams.length != 6)
+            return false;
+
+        Calendar expDate = Calendar.getInstance();
+        expDate.set(Calendar.DAY_OF_MONTH, Integer.parseInt(expParams[0]));
+        expDate.set(Calendar.MONTH, Integer.parseInt(expParams[1]));
+        expDate.set(Calendar.YEAR, Integer.parseInt(expParams[2]));
+        expDate.set(Calendar.HOUR_OF_DAY, Integer.parseInt(expParams[3]));
+        expDate.set(Calendar.MINUTE, Integer.parseInt(expParams[4]));
+        expDate.set(Calendar.SECOND, Integer.parseInt(expParams[5]));
+
+        Calendar rightNow = Calendar.getInstance();
+
+        if (rightNow.getTimeInMillis() < expDate.getTimeInMillis())
+            return true;
+
+        return false;
+    }
+
+    public void connectUser(View v) {
+
+        ProgressBar bar = findViewById(R.id.progressBar);
+        bar.setVisibility(View.VISIBLE);
+
+        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(SpotifyUser.getInstance().getClientID(),
                 AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI);
+                SpotifyUser.getInstance().getRedirectUri());
         builder.setScopes(new String[]{"user-read-private", "streaming"});
         AuthenticationRequest request = builder.build();
 
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
+        AuthenticationClient.openLoginActivity(this, SpotifyUser.getInstance().getRequestCode(), request);
+    }
+
+    public void quitApp(View v) {
+        finish();
+        System.exit(0);
     }
 
     @Override
@@ -50,77 +92,77 @@ public class MainActivity extends Activity implements
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == SpotifyUser.getInstance().getRequestCode()) {
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-                    @Override
-                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                        mPlayer = spotifyPlayer;
-                        mPlayer.addConnectionStateCallback(MainActivity.this);
-                        mPlayer.addNotificationCallback(MainActivity.this);
-                    }
 
-                    @Override
-                    public void onError(Throwable throwable) {
-                        Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
-                    }
-                });
+                SpotifyUser.getInstance().setAccessToken(response.getAccessToken());
+                WritefromCache("token", SpotifyUser.getInstance().getAccessToken());
+
+                Calendar rightNow = Calendar.getInstance();
+                rightNow.add(Calendar.SECOND, response.getExpiresIn());
+                String exp = rightNow.get(Calendar.DAY_OF_MONTH) + " " + rightNow.get(Calendar.MONTH) +
+                        " " + rightNow.get(Calendar.YEAR) + " " + rightNow.get(Calendar.HOUR_OF_DAY) + " " + rightNow.get(Calendar.MINUTE) + " " + rightNow.get(Calendar.SECOND);
+
+                WritefromCache("expiration", exp);
+
+                ProgressBar bar = findViewById(R.id.progressBar);
+                bar.setVisibility(View.INVISIBLE);
+
+                Toast.makeText(getApplicationContext(), "Connection successful!", Toast.LENGTH_SHORT).show();
+
+                Intent newintent = new Intent(this, DiscoverActivity.class);
+                startActivity(newintent);
+
             }
+            else
+                Toast.makeText(getApplicationContext(), "Incorrect token!", Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getApplicationContext(), "Connection failed!", Toast.LENGTH_SHORT).show();
+    }
+
+
+    // TEMPORARY
+    public String TryLoadFromCache(String key) {
+        String ret = null;
+        try {
+
+            InputStream inputStream = this.openFileInput("cache_" + key + ".txt");
+
+            if (inputStream != null) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ((receiveString = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    public void WritefromCache(String key, String value) {
+        try {
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(this.openFileOutput("cache_" + key + ".txt", Context.MODE_PRIVATE));
+            outputStreamWriter.write(value);
+            outputStreamWriter.close();
+
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("MainActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onLoggedIn() {
-        Log.d("MainActivity", "User logged in");
-
-        mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
-    }
-
-    @Override
-    public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
-    }
-
-    @Override
-    public void onLoginFailed(Error error) {
-        Log.d("MainActivity", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
-    }
 }
