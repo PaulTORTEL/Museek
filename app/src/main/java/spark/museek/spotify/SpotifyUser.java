@@ -1,7 +1,7 @@
 package spark.museek.spotify;
 
 
-import java.util.Date;
+import java.util.Calendar;
 
 public class SpotifyUser {
 
@@ -15,7 +15,7 @@ public class SpotifyUser {
     private final int REQUEST_CODE = 1337;
 
     private String ACCESS_TOKEN;
-    //private Date DATE_EXP_IN;
+    private Calendar DATE_EXP_IN;
 
     public String getClientID() {
         return CLIENT_ID;
@@ -37,11 +37,11 @@ public class SpotifyUser {
         ACCESS_TOKEN = token;
     }
 
-    public void setDateExpIn(int exp_in) {
-
+    public void setDateExpIn(Calendar exp_in) {
+        DATE_EXP_IN = exp_in;
     }
-    public void getDateExpIn() {
-    //    return DATE_EXP_IN;
+    public Calendar getDateExpIn() {
+        return DATE_EXP_IN;
     }
 
     public static synchronized SpotifyUser getInstance() {
