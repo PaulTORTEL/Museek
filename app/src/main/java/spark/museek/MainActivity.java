@@ -127,6 +127,7 @@ public class MainActivity extends Activity
             // Check if response's type is of type TOKEN
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
 
+                System.out.println("======= GETTING TOKEN => " + Thread.currentThread().getName() + "======");
                 // We store the access token of the user and we save it into a file
                 SpotifyUser.getInstance().setAccessToken(response.getAccessToken());
                 WritefromCache("token", SpotifyUser.getInstance().getAccessToken());

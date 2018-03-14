@@ -1,8 +1,13 @@
 package spark.museek;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -21,17 +26,33 @@ import com.spotify.sdk.android.player.Config;
 
 import java.util.Set;
 
+import spark.museek.fragments.PlayerFragment;
+import spark.museek.spotify.SongRequester;
+import spark.museek.spotify.SpotifyRecommander;
+import spark.museek.spotify.SpotifyRequester;
+import spark.museek.spotify.SpotifySong;
+
 import spark.museek.spotify.SpotifyUser;
 
-public class DiscoverActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class DiscoverActivity extends AppCompatActivity implements ConnectionStateCallback {
 
-    private Player mPlayer;
+
+    private PlayerFragment playerFragment;
+    private Player player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover);
+
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        this.playerFragment = new PlayerFragment();
+        transaction.add(R.id.container_player, playerFragment);
+        transaction.commit();
 
         // We set the toolbar up
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -49,25 +70,24 @@ public class DiscoverActivity extends AppCompatActivity implements
         Log.d("debug", "genres selected: " + selections.toString());
 
 
-
         Config playerConfig = new Config(this, SpotifyUser.getInstance().getAccessToken(), SpotifyUser.getInstance().getClientID());
+
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
             public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                mPlayer = spotifyPlayer;
-                /*mPlayer.addConnectionStateCallback(DiscoverActivity.this);
-                mPlayer.addNotificationCallback(DiscoverActivity.this);*/
-                //mPlayer.playUri(null, "spotify:track:6EElYDYyvvohMNDbYnrvn4", 0, 0);
-
-
+                player = spotifyPlayer;
+                player.addConnectionStateCallback(DiscoverActivity.this);
+               // mPlayer.addNotificationCallback(DiscoverActivity.this);
 
             }
 
             @Override
             public void onError(Throwable throwable) {
-                Log.e("DiscoverActivity", "Could not initialize player: " + throwable.getMessage());
+                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
             }
         });
+
+
     }
 
     @Override
@@ -107,50 +127,27 @@ public class DiscoverActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("DiscoverActivity", "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("DiscoverActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void onLoggedIn() {
-
-        Toast.makeText(getApplicationContext(), "in logged in!", Toast.LENGTH_SHORT).show();
-
-
+        this.playerFragment.onPlayerLoaded(player);
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("DiscoverActivity", "User logged out");
+        System.out.println("=====  LOGGED OUT  =======");
     }
 
     @Override
     public void onLoginFailed(Error error) {
-
+        System.out.println("=====  LOGIN FAILED  =======");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("DiscoverActivity", "Temporary error occurred");
+        System.out.println("=====  TEMPORARY ERROR  =======");
     }
 
     @Override
-    public void onConnectionMessage(String message) {
-        Log.d("DiscoverActivity", "Received connection message: " + message);
+    public void onConnectionMessage(String s) {
+        System.out.println("=====  CONNECTION MESSAGE  =======");
     }
 }
