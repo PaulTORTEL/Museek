@@ -29,6 +29,7 @@ public class DiscoverActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_discover);
 
+        // We set the toolbar up
         Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
@@ -42,7 +43,6 @@ public class DiscoverActivity extends AppCompatActivity implements
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
             public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                Toast.makeText(getApplicationContext(), "arretez!!", Toast.LENGTH_LONG).show();
                 mPlayer = spotifyPlayer;
                 /*mPlayer.addConnectionStateCallback(DiscoverActivity.this);
                 mPlayer.addNotificationCallback(DiscoverActivity.this);*/
@@ -54,7 +54,7 @@ public class DiscoverActivity extends AppCompatActivity implements
 
             @Override
             public void onError(Throwable throwable) {
-                Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
+                Log.e("DiscoverActivity", "Could not initialize player: " + throwable.getMessage());
             }
         });
     }
@@ -75,7 +75,7 @@ public class DiscoverActivity extends AppCompatActivity implements
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("MainActivity", "Playback event received: " + playerEvent.name());
+        Log.d("DiscoverActivity", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
             default:
@@ -85,7 +85,7 @@ public class DiscoverActivity extends AppCompatActivity implements
 
     @Override
     public void onPlaybackError(Error error) {
-        Log.d("MainActivity", "Playback error received: " + error.name());
+        Log.d("DiscoverActivity", "Playback error received: " + error.name());
         switch (error) {
             // Handle error type as necessary
             default:
@@ -95,15 +95,15 @@ public class DiscoverActivity extends AppCompatActivity implements
 
     @Override
     public void onLoggedIn() {
-        Log.d("debug", "ok dans logged in");
-        Toast.makeText(getApplicationContext(), "test!", Toast.LENGTH_SHORT).show();
+
+        Toast.makeText(getApplicationContext(), "in logged in!", Toast.LENGTH_SHORT).show();
 
 
     }
 
     @Override
     public void onLoggedOut() {
-        Log.d("MainActivity", "User logged out");
+        Log.d("DiscoverActivity", "User logged out");
     }
 
     @Override
@@ -113,11 +113,11 @@ public class DiscoverActivity extends AppCompatActivity implements
 
     @Override
     public void onTemporaryError() {
-        Log.d("MainActivity", "Temporary error occurred");
+        Log.d("DiscoverActivity", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("MainActivity", "Received connection message: " + message);
+        Log.d("DiscoverActivity", "Received connection message: " + message);
     }
 }
