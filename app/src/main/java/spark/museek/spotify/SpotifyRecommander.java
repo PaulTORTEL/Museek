@@ -8,16 +8,19 @@ public class SpotifyRecommander  {
 
     private CopyOnWriteArrayList<SpotifySong> songs;
 
+    private SongRequester listener;
+
     private boolean songRequested;
 
-    public synchronized void requestSong() {
+    public synchronized void requestSong(SongRequester listener) {
+        this.listener = listener;
         if (songs.size() < 2) {
             SpotifyRequester.getInstance().RequestNewReleases();
         }
         if (songs.size() > 0) {
             SpotifySong song = songs.get(0);
             songs.remove(0);
-            //TODO: Callback the activity
+            listener.onSongLoaded(song);
         }
         else {
             this.songRequested = true;
@@ -28,9 +31,11 @@ public class SpotifyRecommander  {
         this.songs.add(song);
         if (this.songRequested) {
             this.songRequested = false;
+            if (this.listener == null) return;
             SpotifySong callbackSong = songs.get(0);
             songs.remove(0);
-            //TODO callback
+            listener.onSongLoaded(callbackSong);
+
         }
     }
 
