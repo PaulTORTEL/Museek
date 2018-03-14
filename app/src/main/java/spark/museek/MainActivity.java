@@ -48,6 +48,7 @@ public class MainActivity extends Activity
             // Start a new activity if the token is still usable
             Intent newintent = new Intent(this, DiscoverActivity.class);
             startActivity(newintent);
+            finish();
         }
     }
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <PreferenceCategory
+        android:title="@string/settings_title">
+
+        <CheckBoxPreference
+            android:key="checkbox_release"
+            android:title="@string/release"
+            android:summary="@string/release_details"
+            android:defaultValue="false"/>
+
+        <CheckBoxPreference
+            android:key="checkbox_genre"
+            android:title="@string/genre"
+            android:summary="@string/genre_details"
+            android:defaultValue="true"/>
+
+
+        <MultiSelectListPreference
+            android:key="genre"
+            android:dependency="checkbox_genre"
+            android:title="@string/genre_title"
+            android:summary="@string/genre_title_details"
+            android:entries="@array/genre"
+            android:entryValues="@array/genre_value"
+            android:defaultValue="@array/genre_value"/>
+
+
+    </PreferenceCategory>
+
+
+
+
+
+
+</PreferenceScreen>

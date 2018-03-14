@@ -21,7 +21,8 @@
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity android:name=".DiscoverActivity"></activity>
+        <activity android:name=".DiscoverActivity" />
+        <activity android:name=".DiscoverPreferences"></activity>
     </application>
 
 </manifest>

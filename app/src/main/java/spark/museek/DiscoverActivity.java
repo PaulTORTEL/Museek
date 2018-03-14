@@ -1,10 +1,14 @@
 package spark.museek;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.player.ConnectionStateCallback;
@@ -14,6 +18,8 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.spotify.sdk.android.player.Config;
+
+import java.util.Set;
 
 import spark.museek.spotify.SpotifyUser;
 
@@ -33,8 +39,14 @@ public class DiscoverActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setTitle("Discover");
+        getSupportActionBar().setIcon(R.drawable.ic_audiotrack_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Set<String> selections = prefs.getStringSet("genre", null);
+        Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
+        Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
+        Log.d("debug", "genres selected: " + selections.toString());
 
 
 
@@ -65,6 +77,28 @@ public class DiscoverActivity extends AppCompatActivity implements
 
         return true;
     }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+
+                Intent newintent = new Intent(this, DiscoverPreferences.class);
+                startActivity(newintent);
+
+
+                return true;
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     @Override
     protected void onDestroy() {
