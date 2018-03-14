@@ -37,6 +37,10 @@ public class SpotifyUser {
         ACCESS_TOKEN = token;
     }
 
+    public String getHeaderToken() {
+        return "Bearer " + this.getAccessToken();
+    }
+
     public void setDateExpIn(int exp_in) {
 
     }

@@ -1,8 +1,14 @@
 package spark.museek.manager;
 
-import org.apache.http.client.methods.HttpGet;
+import android.app.DownloadManager;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RequestParam {
@@ -11,11 +17,16 @@ public class RequestParam {
     private String TOKEN;
 
     private HashMap<String, String> headers = new HashMap<String, String>();
-    private HashMap<String, String> params = new HashMap<String, String>();
+    private List<NameValuePair> params = new ArrayList<NameValuePair>();
 
-    public RequestParam(String URL, String TOKEN) {
+    private String channel;
+
+    private RequestListener listener;
+
+    public RequestParam(RequestListener listener, String URL) {
         this.URL = URL;
-        this.TOKEN = TOKEN;
+        this.channel = "default";
+        this.listener = listener;
     }
 
     public RequestParam addHeader(String key, String value) {
@@ -24,24 +35,12 @@ public class RequestParam {
     }
 
     public RequestParam addParam(String key, String value) {
-        this.params.put(key, value);
+        this.params.add(new BasicNameValuePair(key, value));
         return this;
     }
 
     public String getURL() {
-        StringBuilder finalURL = new StringBuilder(URL);
-        if (params.size() > 0)
-            finalURL.append("?");
-        for (Map.Entry<String, String> entry : params.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            finalURL.append(key);
-            finalURL.append("=");
-            finalURL.append(value);
-            finalURL.append("&");
-        }
-        finalURL.deleteCharAt(finalURL.length() - 1);
-        return finalURL.toString();
+        return URL;
     }
 
     public void setupHeaders(HttpGet request) {
@@ -51,8 +50,20 @@ public class RequestParam {
             request.addHeader(key, value);
         }
     }
+    public RequestParam Channel(String channel) {
+        this.channel = channel;
+        return this;
+    }
 
-    public String getTOKEN() {
-        return this.TOKEN;
+    public String getChannel() {
+        return this.channel;
+    }
+
+    public List<NameValuePair> getParams() {
+        return this.params;
+    }
+
+    public RequestListener getListener() {
+        return this.listener;
     }
 }

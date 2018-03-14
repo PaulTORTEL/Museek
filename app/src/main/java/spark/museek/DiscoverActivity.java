@@ -15,6 +15,8 @@ import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 import com.spotify.sdk.android.player.Config;
 
+import spark.museek.spotify.SpotifyRecommander;
+import spark.museek.spotify.SpotifyRequester;
 import spark.museek.spotify.SpotifyUser;
 
 public class DiscoverActivity extends AppCompatActivity implements
@@ -34,8 +36,7 @@ public class DiscoverActivity extends AppCompatActivity implements
         getSupportActionBar().setTitle("Discover");
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-
-
+        SpotifyRecommander.getInstance().requestSong();
 
         Config playerConfig = new Config(this, SpotifyUser.getInstance().getAccessToken(), SpotifyUser.getInstance().getClientID());
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
