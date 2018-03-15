@@ -35,7 +35,7 @@
         android:textColor="#B9B5B8"
         android:textSize="18sp" />
 
-    <ProgressBar
+    <SeekBar
         android:id="@+id/track_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="350dp"
@@ -60,6 +60,21 @@
             android:paddingTop="0dp"
             android:scaleType="fitStart"
             app:srcCompat="@mipmap/ic_pause"
+            tools:layout_editor_absoluteX="147dp"
+            tools:layout_editor_absoluteY="3dp" />
+
+        <ImageButton
+            android:id="@+id/playButton"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="#00ffffff"
+            android:contentDescription="resume the track"
+            android:paddingTop="0dp"
+            android:scaleType="fitStart"
+            android:visibility="invisible"
+            app:srcCompat="@mipmap/ic_play"
             tools:layout_editor_absoluteX="147dp"
             tools:layout_editor_absoluteY="3dp" />
 

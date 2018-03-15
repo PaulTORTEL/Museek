@@ -1,6 +1,8 @@
 package spark.museek;
 
 
+import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -11,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.ArraySet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +30,7 @@ import com.spotify.sdk.android.player.Config;
 import java.util.Set;
 
 import spark.museek.fragments.PlayerFragment;
+import spark.museek.manager.AppDatabase;
 import spark.museek.spotify.SongRequester;
 import spark.museek.spotify.SpotifyRecommander;
 import spark.museek.spotify.SpotifyRequester;
@@ -63,11 +67,8 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
         getSupportActionBar().setIcon(R.drawable.ic_audiotrack_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> selections = prefs.getStringSet("genre", null);
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
-        Log.d("debug", "genres selected: " + selections.toString());
+        setupDefaultPreferences();
+
 
 
         Config playerConfig = new Config(this, SpotifyUser.getInstance().getAccessToken(), SpotifyUser.getInstance().getClientID());
@@ -86,6 +87,48 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
                 Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
             }
         });
+
+
+    }
+
+    // If there are no preferences yet, it will create ones
+    private void setupDefaultPreferences() {
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Set<String> selections = prefs.getStringSet("genre", null);
+
+        // If there is no preferences yet
+        if (!prefs.getBoolean("checkbox_release", false)
+                && !prefs.getBoolean("checkbox_genre", false)
+                && selections == null) {
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("checkbox_genre", true);
+            Set<String> selects = new ArraySet<>();
+            selects.add("1");
+            selects.add("2");
+            selects.add("3");
+            selects.add("4");
+            selects.add("5");
+            editor.putStringSet("genre", selects);
+            editor.commit();
+        }
+
+        /*
+        Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
+        Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
+        selections = prefs.getStringSet("genre", null);
+
+        if (selections == null)
+            Log.d("debug", "SELECTIONS == NULL");
+
+        else
+            Log.d("debug", "genres selected: " + selections.toString());*/
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
 
     }
@@ -129,6 +172,8 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
     @Override
     public void onLoggedIn() {
         this.playerFragment.onPlayerLoaded(player);
+
+
     }
 
     @Override
