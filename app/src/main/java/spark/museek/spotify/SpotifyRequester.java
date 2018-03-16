@@ -69,6 +69,7 @@ public class SpotifyRequester implements RequestListener {
                             song.setSpotifyID(track.getString("id"));
                             song.setAlbum(album.getString("name"));
                             song.setImageURL(album.getJSONArray("images").getJSONObject(0).getString("url"));
+                            song.setDuration_ms(track.getString("duration_ms"));
 
                             if (song.isImageLoaded())
                             SpotifyRecommander.getInstance().onSongLoaded(song);

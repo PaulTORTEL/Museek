@@ -10,13 +10,19 @@ import java.net.URL;
 
 public class SpotifySong {
 
+
+    private String spotifyID = "";
+
     private String title = "";
     private String artist = "";
     private String album = "";
-    private String spotifyID = "";
     private String imageURL = "";
+    private String duration_ms = "";
+
     private Bitmap image;
     private boolean imageLoaded;
+
+
 
     public String getTitle() {
         return title;
@@ -71,6 +77,14 @@ public class SpotifySong {
         }
     }
 
+    public void setDuration_ms(String duration_ms) {
+        this.duration_ms = duration_ms;
+    }
+
+    public String getDuration_ms() {
+        return this.duration_ms;
+    }
+
     public Bitmap getImage() {
         return image;
     }
@@ -92,7 +106,7 @@ public class SpotifySong {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("== Spotify Song ==\n");
+        sb.append("== Spotify SongLiked ==\n");
         sb.append("Title : ");
         sb.append(this.title);
         sb.append("\n");
