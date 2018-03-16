@@ -65,9 +65,9 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         Set<String> selections = prefs.getStringSet("genre", null);
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
-        Log.d("debug", "genres selected: " + selections.toString());
+      //  Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
+      //  Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
+      //  Log.d("debug", "genres selected: " + selections.toString());
 
 
         Config playerConfig = new Config(this, SpotifyUser.getInstance().getAccessToken(), SpotifyUser.getInstance().getClientID());
