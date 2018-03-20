@@ -110,7 +110,6 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             @Override
             public void onClick(View v) {
 
-                System.out.println(player.getMetadata().currentTrack.name);
 
                 player.pause(null);
 

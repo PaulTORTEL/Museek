@@ -75,6 +75,7 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
 
         Config playerConfig = new Config(this, SpotifyUser.getInstance().getAccessToken(), SpotifyUser.getInstance().getClientID());
+        playerConfig.useCache(false);
 
         Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
