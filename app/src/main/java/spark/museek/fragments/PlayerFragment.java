@@ -22,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import spark.museek.R;
+import spark.museek.beans.PicturedSongLiked;
 import spark.museek.beans.SongLiked;
 
 import spark.museek.manager.DBManager;
@@ -30,11 +31,12 @@ import spark.museek.spotify.SongRequester;
 import spark.museek.spotify.SpotifyRecommander;
 
 import spark.museek.spotify.SpotifySong;
+import spark.museek.spotify.SpotifyUser;
 
 
 public class PlayerFragment extends Fragment implements SongRequester, QueryListener {
 
-    private Player player;
+
     private ImageView trackImageView;
     private TextView titleView;
     private TextView artistView;
@@ -74,7 +76,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                player.seekToPosition(null, progress * 1000);
+                SpotifyUser.getInstance().getPlayer().seekToPosition(null, progress * 1000);
             }
        });
 
@@ -83,7 +85,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
         task = new TimerTask() {
 
             public void run() {
-                PlaybackState state = player.getPlaybackState();
+                PlaybackState state = SpotifyUser.getInstance().getPlayer().getPlaybackState();
 
                 final int positionSec = (int) (state.positionMs / 1000);
 
@@ -100,7 +102,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
         view.findViewById(R.id.playButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player.resume(null);
+                SpotifyUser.getInstance().getPlayer().resume(null);
                 view.findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.pauseButton).setVisibility(View.VISIBLE);
             }
@@ -111,7 +113,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             public void onClick(View v) {
 
 
-                player.pause(null);
+                SpotifyUser.getInstance().getPlayer().pause(null);
 
                 // Temporary
                 DBManager.getInstance().queryListLikedSongs(PlayerFragment.this, getActivity().getApplicationContext());
@@ -131,6 +133,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 // We create the Song which has just been liked
                 SongLiked songLiked = new SongLiked();
 
+                songLiked.setTitle(currentSong.getTitle());
                 songLiked.setAlbum(currentSong.getAlbum());
                 songLiked.setArtist(currentSong.getArtist());
                 Calendar now = Calendar.getInstance();
@@ -139,6 +142,11 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 songLiked.setDuration_ms(currentSong.getDuration_ms());
                 songLiked.setImageURL(currentSong.getImageURL());
                 songLiked.setSpotifyID(currentSong.getSpotifyID());
+
+                PicturedSongLiked song = new PicturedSongLiked(songLiked);
+                song.setPicture(currentSong.getImage());
+                if (!SpotifyUser.getInstance().getLikedSongs().contains(song))
+                    SpotifyUser.getInstance().getLikedSongs().add(0,song);
 
                 // We store it in the Database
                 DBManager.getInstance().saveLikedSong(getActivity().getApplicationContext(), songLiked);
@@ -163,9 +171,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
         timer.cancel();
     }
 
-    public void onPlayerLoaded(Player player) {
-        this.player = player;
-
+    public void onPlayerLoaded() {
         timer.schedule(task, 0, 500);
         SpotifyRecommander.getInstance().requestSong(this);
     }
@@ -177,7 +183,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             @Override
             public void run() {
 
-                player.playUri(new Player.OperationCallback() {
+                SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
                     @Override
                     public void onSuccess() {
 

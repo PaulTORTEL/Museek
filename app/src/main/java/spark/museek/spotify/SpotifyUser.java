@@ -1,7 +1,14 @@
 package spark.museek.spotify;
 
 
+import com.spotify.sdk.android.player.Player;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import spark.museek.beans.PicturedSongLiked;
 
 public class SpotifyUser {
 
@@ -16,6 +23,9 @@ public class SpotifyUser {
 
     private String ACCESS_TOKEN;
     private Calendar DATE_EXP_IN;
+
+    private CopyOnWriteArrayList<PicturedSongLiked> likedSongs;
+    private boolean likesRequested;
 
     public String getClientID() {
         return CLIENT_ID;
@@ -37,6 +47,7 @@ public class SpotifyUser {
         ACCESS_TOKEN = token;
     }
 
+    public CopyOnWriteArrayList<PicturedSongLiked> getLikedSongs() { return likedSongs; }
 
     public String getHeaderToken() {
         return "Bearer " + this.getAccessToken();
@@ -45,9 +56,31 @@ public class SpotifyUser {
     public void setDateExpIn(Calendar exp_in) {
         DATE_EXP_IN = exp_in;
     }
-	
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    private Player player;
+
+    public boolean isLikesRequested() {
+        return likesRequested;
+    }
+
+    public void setLikesRequested(boolean likesRequested) {
+        this.likesRequested = likesRequested;
+    }
+
     public Calendar getDateExpIn() {
         return DATE_EXP_IN;
+    }
+
+    private SpotifyUser() {
+        this.likedSongs = new CopyOnWriteArrayList<PicturedSongLiked>();
     }
 
     public static synchronized SpotifyUser getInstance() {

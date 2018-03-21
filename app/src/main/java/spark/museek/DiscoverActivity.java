@@ -154,10 +154,13 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
                 Intent newintent = new Intent(this, DiscoverPreferences.class);
                 startActivity(newintent);
-
-
                 return true;
 
+            case R.id.action_show_likes:
+
+                Intent likedIntent = new Intent(this, LikedActivity.class);
+                startActivity(likedIntent);
+                return true;
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -175,9 +178,8 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
     @Override
     public void onLoggedIn() {
-        this.playerFragment.onPlayerLoaded(player);
-
-
+        SpotifyUser.getInstance().setPlayer(player);
+        this.playerFragment.onPlayerLoaded();
     }
 
     @Override

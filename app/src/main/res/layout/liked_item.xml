@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?android:attr/selectableItemBackground"
+    >
+
+    <TextView
+        android:id="@+id/liked_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_toEndOf="@+id/liked_item_picture"
+        android:text="Title"
+        android:textAlignment="viewStart"
+        android:textColor="#ffffff" />
+
+    <ImageView
+        android:id="@+id/liked_item_picture"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"
+        app:srcCompat="@drawable/ic_launcher_background" />
+
+    <TextView
+        android:id="@+id/liked_item_artist_album"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/liked_item_title"
+        android:layout_below="@+id/liked_item_title"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingTop="0dp"
+        android:text="Artist - Album"
+        android:textAlignment="viewStart"
+        android:textColor="#80ffffff" />
+</RelativeLayout>

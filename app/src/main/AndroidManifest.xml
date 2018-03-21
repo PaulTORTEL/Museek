@@ -22,7 +22,8 @@
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".DiscoverActivity" />
-        <activity android:name=".DiscoverPreferences"></activity>
+        <activity android:name=".DiscoverPreferences" />
+        <activity android:name=".LikedActivity"></activity>
     </application>
 
 </manifest>

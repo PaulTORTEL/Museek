@@ -1,5 +1,7 @@
 package spark.museek.spotify;
 
+import android.os.AsyncTask;
+
 import com.google.api.client.json.Json;
 
 import org.json.JSONArray;
@@ -23,7 +25,7 @@ public class SpotifyRequester implements RequestListener {
                                 .addParam("offset", String.valueOf(randomOffset))
                                 .addHeader("Authorization", SpotifyUser.getInstance().getHeaderToken());
         JsonRequest req = new JsonRequest();
-        req.execute(param);
+        req.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, param);
     }
 
 

@@ -6,6 +6,7 @@
     <string name="credits">Developed by \n@Vincent COURSAC and Paul TORTEL</string>
     <string name="info">Connect to Spotify and\ndiscover new musics</string>
     <string name="settings">Settings</string>
+    <string name="show_likes">Display Liked Songs</string>
     <string name="release">New realeases only</string>
     <string name="release_details">Discover music from the new releases</string>
     <string name="genre">Specific genres only</string>

@@ -3,6 +3,7 @@ package spark.museek.beans;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 
 @Entity
@@ -73,5 +74,16 @@ public class SongLiked {
 
     public void setDate(long date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SongLiked that = (SongLiked) o;
+
+        return spotifyID.equals(that.spotifyID);
+
     }
 }
