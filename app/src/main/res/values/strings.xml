@@ -9,8 +9,8 @@
     <string name="show_likes">Display Liked Songs</string>
     <string name="release">New realeases only</string>
     <string name="release_details">Discover music from the new releases</string>
-    <string name="genre">Specific genres only</string>
-    <string name="genre_details">Discover music in the genre you have selected</string>
+    <string name="genre">Suggestions only</string>
+    <string name="genre_details">Discover music according to your music taste</string>
     <string name="settings_title">Music selection settings</string>
 
     <string name="genre_title">Genres</string>

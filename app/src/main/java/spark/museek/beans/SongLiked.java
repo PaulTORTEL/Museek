@@ -3,7 +3,6 @@ package spark.museek.beans;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 
 @Entity

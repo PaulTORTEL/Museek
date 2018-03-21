@@ -22,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import spark.museek.R;
+import spark.museek.beans.KnownSong;
 import spark.museek.beans.PicturedSongLiked;
 import spark.museek.beans.SongLiked;
 
@@ -126,6 +127,24 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             }
         });
 
+        view.findViewById(R.id.buttonNo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // We store it into the known songs table as well
+                KnownSong newSongKnown = new KnownSong();
+                newSongKnown.setSpotifyID(currentSong.getSpotifyID());
+                DBManager.getInstance().saveSong(getActivity().getApplicationContext(), newSongKnown);
+
+                // We ask another song to be displayed for the user
+                SpotifyRecommander.getInstance().requestSong(PlayerFragment.this, getActivity().getApplicationContext());
+
+                view.findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
+                view.findViewById(R.id.pauseButton).setVisibility(View.VISIBLE);
+
+            }
+        });
+
         view.findViewById(R.id.buttonYes).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,8 +170,14 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 // We store it in the Database
                 DBManager.getInstance().saveLikedSong(getActivity().getApplicationContext(), songLiked);
 
+                // We store it into the known songs table as well
+                KnownSong newSongKnown = new KnownSong();
+                newSongKnown.setSpotifyID(currentSong.getSpotifyID());
+                DBManager.getInstance().saveSong(getActivity().getApplicationContext(), newSongKnown);
+
+
                 // We ask another song to be displayed for the user
-                SpotifyRecommander.getInstance().requestSong(PlayerFragment.this);
+                SpotifyRecommander.getInstance().requestSong(PlayerFragment.this, getActivity().getApplicationContext());
 
                 view.findViewById(R.id.playButton).setVisibility(View.INVISIBLE);
                 view.findViewById(R.id.pauseButton).setVisibility(View.VISIBLE);
@@ -173,7 +198,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
 
     public void onPlayerLoaded() {
         timer.schedule(task, 0, 500);
-        SpotifyRecommander.getInstance().requestSong(this);
+        SpotifyRecommander.getInstance().requestSong(this, getActivity().getApplicationContext());
     }
 
     @Override

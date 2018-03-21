@@ -1,6 +1,11 @@
 package spark.museek.spotify;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import spark.museek.manager.DBManager;
 
 public class SpotifyRecommander  {
 
@@ -11,8 +16,10 @@ public class SpotifyRecommander  {
     private SongRequester listener;
 
     private boolean songRequested;
+    private Context context;
 
-    public synchronized void requestSong(SongRequester listener) {
+    public synchronized void requestSong(SongRequester listener, Context context) {
+        this.context = context;
         this.listener = listener;
         if (songs.size() < 2) {
             SpotifyRequester.getInstance().RequestNewReleases();
@@ -20,6 +27,7 @@ public class SpotifyRecommander  {
         if (songs.size() > 0) {
             SpotifySong song = songs.get(0);
             songs.remove(0);
+
             listener.onSongLoaded(song);
         }
         else {
@@ -28,6 +36,12 @@ public class SpotifyRecommander  {
     }
 
     public synchronized void onSongLoaded(SpotifySong song) {
+
+        if (DBManager.getInstance().isSongAlreadyKnown(context, song.getSpotifyID())) {
+            Log.d("debug", "song already known!");
+            return;
+        }
+
         this.songs.add(song);
         if (this.songRequested) {
             this.songRequested = false;

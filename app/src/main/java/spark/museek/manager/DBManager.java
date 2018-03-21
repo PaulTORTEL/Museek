@@ -5,7 +5,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import spark.museek.beans.KnownSong;
 import spark.museek.beans.SongLiked;
+import spark.museek.daos.KnownSongDao;
 import spark.museek.daos.SongLikedDao;
 import spark.museek.spotify.SpotifySong;
 
@@ -68,35 +70,47 @@ public class DBManager {
                     return null;
 
                 dao.insertSongsLiked(params);
-                Log.d("debug", "Song saved!");
+
                 return null;
             }
         }.execute(songs);
     }
 
-    // Returns by a callback if the song passed by argument has already been liked or not
-    public void isSongAlreadyLiked(final QueryListener listener, Context context, SpotifySong song) {
+    public void saveSong(Context context, KnownSong... songs) {
 
-        final SongLikedDao dao = getAppDatabase(context).songLikedDao();
+        final KnownSongDao dao = getAppDatabase(context).knownSongDao();
 
-        new AsyncTask<SpotifySong, Void, Void>() {
+        new AsyncTask<KnownSong, Void, Void>() {
             @Override
-            protected Void doInBackground(SpotifySong... params) {
+            protected Void doInBackground(KnownSong... params) {
 
-                if (params.length != 1)
+                if (params.length == 0)
                     return null;
 
-                SongLiked song = dao.getSongLikedById(params[0].getSpotifyID());
-
-                if (song == null)
-                    listener.onSongExistsReceived(params[0], false);
-
-                else
-                    listener.onSongExistsReceived(params[0], true);
+                dao.insertKnownSongs(params);
 
                 return null;
             }
-        }.execute(song);
+        }.execute(songs);
+    }
+
+
+    /** Return whether a song is liked or not
+     * CAUTION: cannot be called in the main thread!
+     * @param context context of the app
+     * @param spotifyID id of the song
+     * @return
+     */
+    public boolean isSongAlreadyKnown(Context context, String spotifyID) {
+
+        final KnownSongDao dao = getAppDatabase(context).knownSongDao();
+
+        int countSong = dao.getCountSongByID(spotifyID);
+
+        if (countSong == 1)
+            return true;
+
+        return false;
     }
 
     public static synchronized DBManager getInstance() {
