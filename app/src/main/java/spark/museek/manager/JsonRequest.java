@@ -1,6 +1,7 @@
 package spark.museek.manager;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -31,6 +32,7 @@ public class JsonRequest extends AsyncTask<RequestParam, Integer, Boolean>{
             param.getListener().onRequestFailed(param.getChannel());
             return false;
         }
+
         URI finalURI = null;
         try {
             finalURI = URIUtils.createURI(
@@ -47,6 +49,7 @@ public class JsonRequest extends AsyncTask<RequestParam, Integer, Boolean>{
         }
 
         HttpGet get = new HttpGet(finalURI);
+
         param.setupHeaders(get);
 
         DefaultHttpClient httpClient = new DefaultHttpClient();

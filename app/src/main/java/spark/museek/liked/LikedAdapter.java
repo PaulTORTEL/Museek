@@ -120,8 +120,4 @@ public class LikedAdapter extends RecyclerView.Adapter<LikedAdapter.ViewHolder> 
 
     }
 
-    @Override
-    public void onSongExistsReceived(SpotifySong song, boolean exists) {
-
-    }
 }

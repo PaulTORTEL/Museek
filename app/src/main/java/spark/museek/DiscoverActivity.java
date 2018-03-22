@@ -67,9 +67,6 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
         getSupportActionBar().setIcon(R.drawable.ic_audiotrack_white_24dp);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        Set<String> selections = prefs.getStringSet("genre", null);
-
         setupDefaultPreferences();
 
 
@@ -102,32 +99,22 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
         Set<String> selections = prefs.getStringSet("genre", null);
 
         // If there is no preferences yet
-        if (!prefs.getBoolean("checkbox_release", false)
-                && !prefs.getBoolean("checkbox_genre", false)
+        if (!prefs.getBoolean("checkbox_releases", false)
+                && !prefs.getBoolean("checkbox_suggestions", false)
                 && selections == null) {
 
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean("checkbox_genre", true);
+            editor.putBoolean("checkbox_releases", true);
+            editor.putBoolean("checkbox_suggestions", false);
             Set<String> selects = new ArraySet<>();
-            selects.add("1");
-            selects.add("2");
-            selects.add("3");
-            selects.add("4");
-            selects.add("5");
+            selects.add("hard-rock");
+            selects.add("pop");
+            selects.add("hip-hop");
+            selects.add("electro");
+            selects.add("classical");
             editor.putStringSet("genre", selects);
             editor.commit();
         }
-
-        /*
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_release", false));
-        Log.d("debug", "test : " + prefs.getBoolean("checkbox_genre", false));
-        selections = prefs.getStringSet("genre", null);
-
-        if (selections == null)
-            Log.d("debug", "SELECTIONS == NULL");
-
-        else
-            Log.d("debug", "genres selected: " + selections.toString());*/
     }
 
     @Override
@@ -154,6 +141,8 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
                 Intent newintent = new Intent(this, DiscoverPreferences.class);
                 startActivity(newintent);
+
+                finish();
                 return true;
 
             case R.id.action_show_likes:

@@ -247,13 +247,4 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             Log.d("debug", "Song stored ==> " + s.getSpotifyID() + s.getTitle() + " " + s.getArtist() + " " + s.getAlbum() + " " + s.getImageURL());
     }
 
-    @Override
-    public void onSongExistsReceived(SpotifySong song, boolean exists) {
-
-        if (exists)
-            Log.d("debug", song.getTitle() + " already liked");
-
-        else
-            Log.d("debug", song.getTitle() + " not liked yet");
-    }
 }

@@ -2,19 +2,36 @@
 <resources>
 
     <string-array name="genre">
-        <item>Hard-rock</item>
-        <item>Pop</item>
-        <item>Hip-hop</item>
+        <item>Chill</item>
+        <item>Classical</item>
         <item>Electro</item>
-        <item>Classic</item>
+        <item>Hard-rock</item>
+        <item>Hip-hop</item>
+        <item>Jazz</item>
+        <item>Metal</item>
+        <item>Pop</item>
+        <item>Punk rock</item>
+        <item>R\'n\'B</item>
+        <item>Sleep</item>
+        <item>Work out</item>
+
+
+
     </string-array>
 
     <string-array name="genre_value">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
+        <item>chill</item>
+        <item>classical</item>
+        <item>electro</item>
+        <item>hard-rock</item>
+        <item>hip-hop</item>
+        <item>jazz</item>
+        <item>metal</item>
+        <item>pop</item>
+        <item>punk-rock</item>
+        <item>r-n-b</item>
+        <item>sleep</item>
+        <item>work-out</item>
     </string-array>
 
 </resources>

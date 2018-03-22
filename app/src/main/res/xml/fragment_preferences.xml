@@ -8,13 +8,13 @@
         android:title="@string/settings_title">
 
         <CheckBoxPreference
-            android:key="checkbox_release"
+            android:key="checkbox_releases"
             android:title="@string/release"
             android:summary="@string/release_details"
             android:defaultValue="false"/>
 
         <CheckBoxPreference
-            android:key="checkbox_genre"
+            android:key="checkbox_suggestions"
             android:title="@string/genre"
             android:summary="@string/genre_details"
             android:defaultValue="true"/>
@@ -22,12 +22,22 @@
 
         <MultiSelectListPreference
             android:key="genre"
-            android:dependency="checkbox_genre"
+            android:dependency="checkbox_suggestions"
             android:title="@string/genre_title"
             android:summary="@string/genre_title_details"
             android:entries="@array/genre"
             android:entryValues="@array/genre_value"
             android:defaultValue="@array/genre_value"/>
+
+        <EditTextPreference
+            android:defaultValue="0"
+            android:inputType="number"
+            android:key="tempo"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Minimum music tempo"
+            android:dependency="checkbox_suggestions"
+            android:summary="The minimum pace of the music (0 will be no filter)" />
 
 
     </PreferenceCategory>
