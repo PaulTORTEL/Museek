@@ -53,7 +53,7 @@ public class LikedListFragment extends Fragment {
         likedView.addOnItemTouchListener(new LikedClickListener(getActivity().getApplicationContext(), likedView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-            displayPlayer(SpotifyUser.getInstance().getLikedSongs().get(position));
+                displayPlayer(SpotifyUser.getInstance().getLikedSongs().get(position));
             }
 
             @Override
@@ -91,4 +91,9 @@ public class LikedListFragment extends Fragment {
         this.fragmentAdded = false;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        SpotifyUser.getInstance().setIsPlaying(false);
+    }
 }

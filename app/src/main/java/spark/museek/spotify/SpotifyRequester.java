@@ -72,7 +72,8 @@ public class SpotifyRequester implements RequestListener {
                             song.setTitle(track.getString("name"));
                             song.setSpotifyID(track.getString("id"));
                             song.setAlbum(album.getString("name"));
-                            song.setImageURL(album.getJSONArray("images").getJSONObject(0).getString("url"));
+                            song.setImageURL(album.getJSONArray("images").getJSONObject(1).getString("url"),
+                                    album.getJSONArray("images").getJSONObject(2).getString("url"));
                             song.setDuration_ms(track.getString("duration_ms"));
 
                             if (song.isImageLoaded())
@@ -170,7 +171,8 @@ public class SpotifyRequester implements RequestListener {
 
                 JSONObject album = track.getJSONObject("album");
                 song.setAlbum(album.getString("name"));
-                song.setImageURL(album.getJSONArray("images").getJSONObject(0).getString("url"));
+                song.setImageURL(album.getJSONArray("images").getJSONObject(1).getString("url"),
+                        album.getJSONArray("images").getJSONObject(2).getString("url"));
                 song.setDuration_ms(track.getString("duration_ms"));
 
                 if (song.isImageLoaded())

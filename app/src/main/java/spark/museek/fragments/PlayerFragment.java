@@ -2,6 +2,7 @@ package spark.museek.fragments;
 
 
 import android.app.Fragment;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -122,10 +123,6 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
 
                 SpotifyUser.getInstance().getPlayer().pause(null);
 
-                // Temporary
-                DBManager.getInstance().queryListLikedSongs(PlayerFragment.this, getActivity().getApplicationContext());
-                // ==
-
                 view.findViewById(R.id.playButton).setVisibility(View.VISIBLE);
                 view.findViewById(R.id.pauseButton).setVisibility(View.INVISIBLE);
 
@@ -183,7 +180,6 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 newSongKnown.setSpotifyID(currentSong.getSpotifyID());
                 DBManager.getInstance().saveSong(getActivity().getApplicationContext(), newSongKnown);
 
-
                 // We ask another song to be displayed for the user
                 SpotifyRecommander.getInstance().requestSong(PlayerFragment.this, getActivity().getApplicationContext());
 
@@ -204,9 +200,45 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
         timer.cancel();
     }
 
+
     public void onPlayerLoaded() {
         timer.schedule(task, 0, 500);
         SpotifyRecommander.getInstance().requestSong(this, getActivity().getApplicationContext());
+    }
+
+    public void prepareRestartCurrentSong() {
+
+
+
+        SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                SpotifyUser.getInstance().getPlayer().pause(null);
+                playButton.setVisibility(View.VISIBLE);
+                pauseButton.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onError(Error error) {
+
+            }
+        }, currentSong.getTrackURL(), 0, 1);
+
+    }
+
+    public void resumeCurrentSong() {
+        SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
+            @Override
+            public void onSuccess() {
+                playButton.setVisibility(View.INVISIBLE);
+                pauseButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onError(Error error) {
+
+            }
+        }, currentSong.getTrackURL(), 0, 1);
     }
 
     @Override
@@ -232,8 +264,22 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 if (song.getImage() != null) {
                     trackImageView.setImageBitmap(song.getImage());
                 }
-                titleView.setText(song.getTitle());
-                artistView.setText(song.getArtist());
+
+                String title = song.getTitle();
+                String artist = song.getArtist();
+
+                if (title.length() >= 50) {
+                    title = title.substring(0,46);
+                    title += "...";
+                }
+
+                if (artist.length() >= 50) {
+                    artist = artist.substring(0,46);
+                    artist += "...";
+                }
+
+                titleView.setText(title);
+                artistView.setText(artist);
 
                 int duration = Integer.parseInt(song.getDuration_ms()) / 1000;
                 seekBar.setMax(duration);

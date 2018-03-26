@@ -3,14 +3,11 @@ package spark.museek.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,10 +21,7 @@ import java.util.Date;
 
 import spark.museek.R;
 import spark.museek.beans.PicturedSongLiked;
-import spark.museek.liked.ClickListener;
-import spark.museek.liked.LikedAdapter;
-import spark.museek.liked.LikedClickListener;
-import spark.museek.spotify.SpotifySong;
+
 import spark.museek.spotify.SpotifyUser;
 
 public class LikedPlayerFragment extends Fragment {
@@ -40,8 +34,6 @@ public class LikedPlayerFragment extends Fragment {
     private TextView titleView, infosView, dateView;
 
     private ImageButton playButton;
-
-    private boolean playing;
 
 
     @Override
@@ -67,7 +59,7 @@ public class LikedPlayerFragment extends Fragment {
         this.playButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (playing) {
+                if (SpotifyUser.getInstance().getIsPlaying()) {
                     pauseSong(false);
                 }
                 else {
@@ -97,12 +89,12 @@ public class LikedPlayerFragment extends Fragment {
     }
 
     private void playSong() {
-        if (playing) return;
+        if (SpotifyUser.getInstance().getIsPlaying()) return;
 
         SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
-            playing = true;
+                SpotifyUser.getInstance().setIsPlaying(true);
                 playButton.setImageResource(R.mipmap.ic_pause);
             }
 
@@ -113,9 +105,9 @@ public class LikedPlayerFragment extends Fragment {
         },  "spotify:track:" + this.song.getSongLiked().getSpotifyID(), 0 ,0);
     }
     private void pauseSong(final boolean reset) {
-        if (!playing && !reset) return;
+        if (!SpotifyUser.getInstance().getIsPlaying() && !reset) return;
 
-        if (!playing && reset) {
+        if (!SpotifyUser.getInstance().getIsPlaying() && reset) {
             playSong();
             return;
         }
@@ -123,7 +115,7 @@ public class LikedPlayerFragment extends Fragment {
         SpotifyUser.getInstance().getPlayer().pause(new Player.OperationCallback() {
             @Override
             public void onSuccess() {
-                playing = false;
+                SpotifyUser.getInstance().setIsPlaying(false);
                 if (reset)
                     playSong();
                 else
@@ -135,7 +127,6 @@ public class LikedPlayerFragment extends Fragment {
                 Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
             }
         });
-
     }
 
     public void updateView() {
@@ -164,4 +155,5 @@ public class LikedPlayerFragment extends Fragment {
         SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
         this.dateView.setText(dt.format(likedDate));
     }
+
 }

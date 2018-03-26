@@ -29,6 +29,13 @@ public class SpotifyUser {
 
     private boolean parameterChanged;
 
+    private boolean isPlaying;
+
+
+    public boolean getIsPlaying() { return isPlaying; }
+    public void setIsPlaying(boolean playing) { isPlaying = playing; }
+
+
     public String getClientID() {
         return CLIENT_ID;
     }
@@ -102,5 +109,7 @@ public class SpotifyUser {
         }
         return mInstance;
     }
+
+
 
 }

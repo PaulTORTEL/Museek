@@ -74,9 +74,10 @@ public class DiscoverPreferences extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public static interface PreferenceListener {
-        public void onPreferenceChanged();
+    public interface PreferenceListener {
+        void onPreferenceChanged();
     }
+
     public static class SettingsFragment extends PreferenceFragment {
 
         private PreferenceListener prefListener;
@@ -101,17 +102,17 @@ public class DiscoverPreferences extends AppCompatActivity {
 
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    prefListener.onPreferenceChanged();
-                    for (CheckBoxPreference checkbox : checkboxes) {
-                        if (!checkbox.getKey().equals(preference.getKey()) && checkbox.isChecked()) {
-                            checkbox.setChecked(false);
-                        }
-                        else if (checkbox.getKey().equals(preference.getKey()) && !checkbox.isChecked()) {
-                            checkbox.setChecked(true);
-                        }
+                prefListener.onPreferenceChanged();
+                for (CheckBoxPreference checkbox : checkboxes) {
+                    if (!checkbox.getKey().equals(preference.getKey()) && checkbox.isChecked()) {
+                        checkbox.setChecked(false);
                     }
+                    else if (checkbox.getKey().equals(preference.getKey()) && !checkbox.isChecked()) {
+                        checkbox.setChecked(true);
+                    }
+                }
 
-                    return false;
+                return false;
                 }
             };
 

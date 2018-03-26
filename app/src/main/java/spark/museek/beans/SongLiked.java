@@ -16,6 +16,7 @@ public class SongLiked {
     private String artist = "";
     private String album = "";
     private String imageURL = "";
+    private String imageHQURL = "";
     private String duration_ms = "";
     private long date;
 
@@ -58,6 +59,11 @@ public class SongLiked {
     public void setImageURL(String imageURL) {
         this.imageURL = imageURL;
     }
+
+    public String getImageHQURL() { return imageHQURL; }
+
+    public void setImageHQURL(String imgURL) { this.imageHQURL = imgURL; }
+
 
     public String getDuration_ms() {
         return duration_ms;

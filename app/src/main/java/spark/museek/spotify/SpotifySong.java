@@ -17,6 +17,7 @@ public class SpotifySong {
     private String artist = "";
     private String album = "";
     private String imageURL = "";
+    private String imageHQURL = "";
     private String duration_ms = "";
 
     private Bitmap image;
@@ -60,11 +61,17 @@ public class SpotifySong {
         return imageURL;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public String getImageHQURL() { return imageHQURL; }
+
+    public void setImageHQURL(String imgURL) { this.imageHQURL = imgURL; }
+
+
+    public void setImageURL(String imageHighQURL, String imageLowQURL) {
+        this.imageURL = imageLowQURL;
+        this.imageHQURL = imageHighQURL;
 
         try {
-            URL url = new URL(this.imageURL);
+            URL url = new URL(imageHighQURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
