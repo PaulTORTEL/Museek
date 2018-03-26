@@ -92,6 +92,15 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
 
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        if (SpotifyUser.getInstance().hasParameterChanged()) {
+            SpotifyRecommander.getInstance().requestSong(playerFragment, this.getApplicationContext());
+        }
+    }
+
     // If there are no preferences yet, it will create ones
     private void setupDefaultPreferences() {
 
@@ -142,7 +151,6 @@ public class DiscoverActivity extends AppCompatActivity implements ConnectionSta
                 Intent newintent = new Intent(this, DiscoverPreferences.class);
                 startActivity(newintent);
 
-                finish();
                 return true;
 
             case R.id.action_show_likes:

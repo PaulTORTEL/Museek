@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -48,6 +49,8 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
 
     private SpotifySong currentSong;
 
+    private ImageButton playButton, pauseButton;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
 
@@ -58,6 +61,9 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
 
         this.seekBar = view.findViewById(R.id.track_progress);
 
+
+        this.playButton = view.findViewById(R.id.playButton);
+        this.pauseButton = view.findViewById(R.id.pauseButton);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             int progress = 0;
@@ -150,6 +156,8 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
             public void onClick(View v) {
 
                 // We create the Song which has just been liked
+                if (currentSong == null) return;
+
                 SongLiked songLiked = new SongLiked();
 
                 songLiked.setTitle(currentSong.getTitle());
@@ -211,7 +219,8 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
                     @Override
                     public void onSuccess() {
-
+                       playButton.setVisibility(View.INVISIBLE);
+                       pauseButton.setVisibility(View.VISIBLE);
                     }
 
                     @Override

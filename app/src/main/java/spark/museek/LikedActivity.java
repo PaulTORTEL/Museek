@@ -8,11 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import spark.museek.fragments.LikedListFragment;
+import spark.museek.fragments.LikedPlayerFragment;
 import spark.museek.fragments.PlayerFragment;
 
 public class LikedActivity extends AppCompatActivity {
 
     private LikedListFragment likedListFragment;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +35,9 @@ public class LikedActivity extends AppCompatActivity {
         this.likedListFragment = new LikedListFragment();
         transaction.add(R.id.container_liked, likedListFragment);
         transaction.commit();
+
+
+
     }
 
     @Override

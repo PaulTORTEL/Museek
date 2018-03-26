@@ -63,8 +63,8 @@ public class SpotifyRecommander  {
 
             else if (mode.equals("suggestions"))
                 SpotifyRequester.getInstance().RequestSuggestions(selections, tempo);
-
         }
+
         if (songs.size() > 0) {
             SpotifySong song = songs.get(0);
             songs.remove(0);
@@ -106,7 +106,6 @@ public class SpotifyRecommander  {
         }
         return instance;
     }
-
 
 
 }

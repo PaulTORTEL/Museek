@@ -27,6 +27,8 @@ public class SpotifyUser {
     private CopyOnWriteArrayList<PicturedSongLiked> likedSongs;
     private boolean likesRequested;
 
+    private boolean parameterChanged;
+
     public String getClientID() {
         return CLIENT_ID;
     }
@@ -65,6 +67,17 @@ public class SpotifyUser {
         this.player = player;
     }
 
+    public void setParameterChanged() {
+        this.parameterChanged = true;
+    }
+
+    public boolean hasParameterChanged() {
+        if (this.parameterChanged) {
+            parameterChanged = false;
+            return true;
+        }
+        return false;
+    }
     private Player player;
 
     public boolean isLikesRequested() {

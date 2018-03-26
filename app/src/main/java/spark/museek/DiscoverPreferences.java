@@ -13,9 +13,15 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.Player;
 
 import java.util.ArrayList;
 import java.util.Set;
+
+import spark.museek.spotify.SpotifyUser;
 
 public class DiscoverPreferences extends AppCompatActivity {
 
@@ -31,6 +37,23 @@ public class DiscoverPreferences extends AppCompatActivity {
         ft.add(R.id.frag_settings_container, sf, "SETTINGS_FRAGMENT");
         ft.commit();
 
+        sf.setListener(new PreferenceListener() {
+            @Override
+            public void onPreferenceChanged() {
+                SpotifyUser.getInstance().getPlayer().pause(new Player.OperationCallback() {
+                    @Override
+                    public void onSuccess() {
+                        SpotifyUser.getInstance().setParameterChanged();
+                    }
+
+                    @Override
+                    public void onError(Error error) {
+                        Toast.makeText(DiscoverPreferences.this, error.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
         Toolbar toolbar = findViewById(R.id.toolbar_settings);
         setSupportActionBar(toolbar);
 
@@ -45,16 +68,22 @@ public class DiscoverPreferences extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                Intent intent = new Intent(this, DiscoverActivity.class);
-                startActivity(intent);
                 finish();
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-
+    public static interface PreferenceListener {
+        public void onPreferenceChanged();
+    }
     public static class SettingsFragment extends PreferenceFragment {
+
+        private PreferenceListener prefListener;
+
+        public void setListener(PreferenceListener listener) {
+            this.prefListener = listener;
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +101,7 @@ public class DiscoverPreferences extends AppCompatActivity {
 
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-
+                    prefListener.onPreferenceChanged();
                     for (CheckBoxPreference checkbox : checkboxes) {
                         if (!checkbox.getKey().equals(preference.getKey()) && checkbox.isChecked()) {
                             checkbox.setChecked(false);
@@ -112,7 +141,7 @@ public class DiscoverPreferences extends AppCompatActivity {
                         tempoText.setText("0");
                         return false;
                     }
-
+                    prefListener.onPreferenceChanged();
                     return true;
                 }
             });
@@ -138,6 +167,8 @@ public class DiscoverPreferences extends AppCompatActivity {
 
                             return false;
                         }
+
+                        prefListener.onPreferenceChanged();
 
                         return true;
                     }
