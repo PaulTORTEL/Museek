@@ -1,13 +1,26 @@
 package spark.museek;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.arch.persistence.room.Transaction;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -20,15 +33,40 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Calendar;
 
+import spark.museek.fragments.NoWifiDialogFragment;
 import spark.museek.spotify.SpotifyUser;
 
 public class MainActivity extends Activity
 {
 
+    private boolean hasTriedToken = false;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hasTriedToken = false;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if (!checkWifiOnAndConnected()) {
+
+            FragmentManager fm = getFragmentManager();
+            NoWifiDialogFragment wifiDialog = new NoWifiDialogFragment();
+            wifiDialog.show(fm, "WIFI_FRAGMENT");
+        }
+
+        else
+            tryConnectFromPreviousToken();
+    }
+
+    private void tryConnectFromPreviousToken() {
+
+        hasTriedToken = true;
 
         // Try to retrieve the token from the saving file, will be null if there is nothing saved
         SpotifyUser.getInstance().setAccessToken(TryLoadFromCache("token"));
@@ -85,8 +123,29 @@ public class MainActivity extends Activity
         return false;
     }
 
+    // Function from https://stackoverflow.com/questions/3841317/how-do-i-see-if-wi-fi-is-connected-on-android
+    private boolean checkWifiOnAndConnected() {
+        WifiManager wifiMgr = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiMgr.isWifiEnabled()) { // Wi-Fi adapter is ON
+
+            WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+
+            if( wifiInfo.getNetworkId() == -1 )
+                return false; // Not connected to an access point
+
+            return true; // Connected to an access point
+        }
+        else
+            return false; // Wi-Fi adapter is OFF
+    }
+
     // Function called when the user presses the "connect" button
     public void connectUser(View v) {
+
+        // If wifi was disabled the token has not been read, so we check now if there is still a valid token
+        if (!hasTriedToken)
+            tryConnectFromPreviousToken();
 
         ProgressBar bar = findViewById(R.id.progressBar);
         bar.setVisibility(View.VISIBLE);
@@ -156,7 +215,7 @@ public class MainActivity extends Activity
             else {
 
                 // An error occured (incorrect type)
-                Toast.makeText(getApplicationContext(), "Incorrect type!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Impossible to connect! Check your Internet connection", Toast.LENGTH_SHORT).show();
 
                 ProgressBar bar = findViewById(R.id.progressBar);
                 bar.setVisibility(View.INVISIBLE);
