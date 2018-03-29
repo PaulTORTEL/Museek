@@ -14,7 +14,6 @@ import java.util.Map;
 public class RequestParam {
 
     private String URL;
-    private String TOKEN;
 
     private HashMap<String, String> headers = new HashMap<String, String>();
     private List<NameValuePair> params = new ArrayList<NameValuePair>();

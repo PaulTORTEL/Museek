@@ -67,6 +67,7 @@ public class LikedListFragment extends Fragment {
         return view;
     }
 
+    //Display the player fragment over the list
     public synchronized void displayPlayer(PicturedSongLiked song) {
         if (!this.fragmentAdded)  {
             this.likedPlayerFragment.setSong(song);
@@ -82,6 +83,7 @@ public class LikedListFragment extends Fragment {
         }
     }
 
+    //Hide the player
     public synchronized void hidePlayer() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction tr = fm.beginTransaction();

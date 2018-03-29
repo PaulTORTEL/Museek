@@ -19,6 +19,7 @@ import spark.museek.manager.RequestParam;
 public class SpotifyRequester implements RequestListener {
     private static SpotifyRequester instance;
 
+    //Request new releases from the Spotify API
     public void RequestNewReleases () {
         int randomOffset = ThreadLocalRandom.current().nextInt(0, 50 + 1);
         RequestParam param = new RequestParam(this, "https://api.spotify.com/v1/browse/new-releases")
@@ -41,6 +42,7 @@ public class SpotifyRequester implements RequestListener {
         return instance;
     }
 
+    //Handle the JSon given by the SpotifyAPI and convert it to a SpotifySong
     private void handleReleasesRequest(String json) {
         try {
             JSONObject obj = new JSONObject(json);
@@ -117,7 +119,7 @@ public class SpotifyRequester implements RequestListener {
     }
 
 
-
+    //Request suggestions from the Spotify API managed by the user preferences
     public void RequestSuggestions (Set<String> selections, int tempo) {
         int randomOffset = ThreadLocalRandom.current().nextInt(0, 50 + 1);
         RequestParam param = new RequestParam(this, "https://api.spotify.com/v1/recommendations")
@@ -152,6 +154,7 @@ public class SpotifyRequester implements RequestListener {
         req.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, param);
     }
 
+    //Handle the json response
     private void handleSuggestionsRequest(String json) {
         try {
             JSONObject obj = new JSONObject(json);
