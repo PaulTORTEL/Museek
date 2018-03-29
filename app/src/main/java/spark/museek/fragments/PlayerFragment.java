@@ -20,6 +20,7 @@ import com.spotify.sdk.android.player.Player;
 import java.util.Calendar;
 import java.util.List;
 
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -161,6 +162,7 @@ public class PlayerFragment extends Fragment implements SongRequester, QueryList
                 songLiked.setAlbum(currentSong.getAlbum());
                 songLiked.setArtist(currentSong.getArtist());
                 Calendar now = Calendar.getInstance();
+                now.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
 
                 songLiked.setDate(now.getTimeInMillis());
                 songLiked.setDuration_ms(currentSong.getDuration_ms());

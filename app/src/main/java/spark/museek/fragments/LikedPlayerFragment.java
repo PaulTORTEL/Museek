@@ -16,8 +16,10 @@ import android.widget.Toast;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
 
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 import spark.museek.R;
 import spark.museek.beans.PicturedSongLiked;
@@ -51,7 +53,7 @@ public class LikedPlayerFragment extends Fragment {
         ((ImageButton) view.findViewById(R.id.closePlayerButton)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pauseSong(false);
+                pauseSong(false, true);
                 listFragment.hidePlayer();
             }
         });
@@ -62,7 +64,7 @@ public class LikedPlayerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (SpotifyUser.getInstance().getIsPlaying()) {
-                    pauseSong(false);
+                    pauseSong(false, false);
                 }
                 else {
                     playSong();
@@ -81,13 +83,15 @@ public class LikedPlayerFragment extends Fragment {
     }
 
     public void setSong(PicturedSongLiked song) {
+        isPausing = false;
         this.song = song;
     }
 
     public void updateSong(PicturedSongLiked song) {
         this.song = song;
         this.updateView();
-        this.pauseSong(true);
+        this.isPausing = false;
+        this.pauseSong(true, true);
     }
 
     //uses the Spotify SDK Player to play the song
@@ -128,7 +132,7 @@ public class LikedPlayerFragment extends Fragment {
     }
 
     //We pause the song
-    private void pauseSong(final boolean reset) {
+    private void pauseSong(final boolean reset, final boolean stop) {
         if (!SpotifyUser.getInstance().getIsPlaying() && !reset) return;
 
         if (!SpotifyUser.getInstance().getIsPlaying() && reset) {
@@ -141,10 +145,13 @@ public class LikedPlayerFragment extends Fragment {
             public void onSuccess() {
                 SpotifyUser.getInstance().setIsPlaying(false);
                 if (reset) {
+                    isPausing = false;
                     playSong();
                 }
                 else {
+                    if (!stop)
                     isPausing = true;
+
                     playButton.setImageResource(R.mipmap.ic_play);
                 }
 
@@ -181,7 +188,8 @@ public class LikedPlayerFragment extends Fragment {
         }
         this.infosView.setText(artist + " - " + album);
         Date likedDate = new Date(this.song.getSongLiked().getDate());
-        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+        SimpleDateFormat dt = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        dt.setTimeZone(TimeZone.getTimeZone("Europe/Paris"));
         this.dateView.setText(dt.format(likedDate));
     }
 

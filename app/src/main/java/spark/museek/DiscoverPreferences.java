@@ -143,7 +143,6 @@ public class DiscoverPreferences extends AppCompatActivity {
                         }
                     } catch (Exception e) {
                         tempoText.setText("0");
-                        Log.d("debug", "INSIDE THE CATCH");
                         return false;
                     }
 
