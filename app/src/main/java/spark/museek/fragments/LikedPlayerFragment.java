@@ -35,6 +35,8 @@ public class LikedPlayerFragment extends Fragment {
 
     private ImageButton playButton;
 
+    private boolean isPausing;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
@@ -88,22 +90,44 @@ public class LikedPlayerFragment extends Fragment {
         this.pauseSong(true);
     }
 
+    //uses the Spotify SDK Player to play the song
     private void playSong() {
         if (SpotifyUser.getInstance().getIsPlaying()) return;
 
-        SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
-            @Override
-            public void onSuccess() {
-                SpotifyUser.getInstance().setIsPlaying(true);
-                playButton.setImageResource(R.mipmap.ic_pause);
-            }
+        if (isPausing) {
+            SpotifyUser.getInstance().getPlayer().resume(new Player.OperationCallback() {
+                @Override
+                public void onSuccess() {
+                    SpotifyUser.getInstance().setIsPlaying(true);
+                    playButton.setImageResource(R.mipmap.ic_pause);
+                    isPausing = false;
+                }
 
-            @Override
-            public void onError(Error error) {
-                Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
-            }
-        },  "spotify:track:" + this.song.getSongLiked().getSpotifyID(), 0 ,0);
+                @Override
+                public void onError(Error error) {
+                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+        else {
+            SpotifyUser.getInstance().getPlayer().playUri(new Player.OperationCallback() {
+                @Override
+                public void onSuccess() {
+                    SpotifyUser.getInstance().setIsPlaying(true);
+                    playButton.setImageResource(R.mipmap.ic_pause);
+                }
+
+                @Override
+                public void onError(Error error) {
+                    Toast.makeText(getActivity(), error.toString(), Toast.LENGTH_LONG).show();
+                }
+            },  "spotify:track:" + this.song.getSongLiked().getSpotifyID(), 0 ,0);
+        }
+
     }
+
+    //We pause the song
     private void pauseSong(final boolean reset) {
         if (!SpotifyUser.getInstance().getIsPlaying() && !reset) return;
 
@@ -116,10 +140,14 @@ public class LikedPlayerFragment extends Fragment {
             @Override
             public void onSuccess() {
                 SpotifyUser.getInstance().setIsPlaying(false);
-                if (reset)
+                if (reset) {
                     playSong();
-                else
+                }
+                else {
+                    isPausing = true;
                     playButton.setImageResource(R.mipmap.ic_play);
+                }
+
             }
 
             @Override
@@ -129,6 +157,7 @@ public class LikedPlayerFragment extends Fragment {
         });
     }
 
+    //When we display the fragment or if we change the song, we update the view with the correct informations
     public void updateView() {
         this.pictureView.setImageBitmap(this.song.getPicture());
 
