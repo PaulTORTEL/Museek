@@ -2,14 +2,13 @@ package spark.museek;
 
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.MultiSelectListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -18,6 +17,7 @@ import android.widget.Toast;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Player;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -131,17 +131,22 @@ public class DiscoverPreferences extends AppCompatActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object o) {
 
-                    int tempo = Integer.parseInt((String) o);
+                    try {
+                        int tempo = Integer.parseInt((String) o);
 
-                    if (tempo > 200) {
-                        tempoText.setText("200");
-                        return false;
-                    }
-
-                    else if (tempo < 0) {
+                        if (tempo > 200) {
+                            tempoText.setText("200");
+                            return false;
+                        } else if (tempo < 0) {
+                            tempoText.setText("0");
+                            return false;
+                        }
+                    } catch (Exception e) {
                         tempoText.setText("0");
+                        Log.d("debug", "INSIDE THE CATCH");
                         return false;
                     }
+
                     prefListener.onPreferenceChanged();
                     return true;
                 }

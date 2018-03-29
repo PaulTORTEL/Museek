@@ -64,7 +64,7 @@ public class MainActivity extends Activity
             tryConnectFromPreviousToken();
     }
 
-    private void tryConnectFromPreviousToken() {
+    public void tryConnectFromPreviousToken() {
 
         hasTriedToken = true;
 
