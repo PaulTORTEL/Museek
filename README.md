@@ -6,4 +6,4 @@ Setup a filter to only get rock music, like or dislike the music the app present
 
 Museek uses the Spotify API and requires the user to have a Spotify premium account, and the Spotify app installed on the device.
 
-### This app has been developed by Paul TORTEL & Vincent COURSAC
+### This app has been developed in **March 2018** by Paul TORTEL & Vincent COURSAC
